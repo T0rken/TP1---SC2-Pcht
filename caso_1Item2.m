@@ -35,3 +35,15 @@ ylabel('Tension [V]');
 %       Amplitud de la tension de entrada = 12 [V] -> varia entre +12 y -12
 %       Amplitud de la tension de capacitor = 12 [V]
 %
+%   Para el problema en cuestion se sabe que:
+%       u(t) = v_e(t)
+%       y(t) = v_c(t)
+%
+%   Desarrollando por Transf de Laplace, se puede ver que la funcion de
+%   transferencia del sistema sera:
+%       G(s) = 1 / (L*C*(s^2) + C*R*s + 1)
+%
+%   Se utilizara el metodo de Chen para hallar los valores de la funcion de
+%   transferencia del sistema, de manera que se propone que:
+%       G(s) = (K * (T_3*s + 1) / ((T_1*s + 1) * (T_2*s + 1))
+%
