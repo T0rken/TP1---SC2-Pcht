@@ -5,7 +5,8 @@ clear all; clc; close all
 %genero una matriz con los datos proporcionados
 Data = readmatrix('G:\My Drive\a Ingenieria\2024 Primer Semestre\Sistemas de Control 2\Entregas\Pucheta\Act N1 - fecha max 23_04\Consignas\Curvas_Medidas_RLC_2024.xls');
 DataBis = readmatrix('Curvas_Medidas_RLC_2024.xls');
- 
+
+%genero las graficas correspondientes a cada dato en funcion del tiempo 
 fig = figure(1);
 fig.Name = 'Corriente';
 plot(Data(:,1),Data(:,2)); %genero un grafico de la corriente (col 2) en funcion del tiempo (col 1)
