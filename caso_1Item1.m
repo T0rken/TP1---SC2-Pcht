@@ -1,4 +1,4 @@
-% Caso 1 
+% Caso 1 - item 1
 % Sistema de dos variables de estado
 
 clc;clear all;close all;
