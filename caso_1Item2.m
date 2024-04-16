@@ -47,3 +47,44 @@ ylabel('Tension [V]');
 %   transferencia del sistema, de manera que se propone que:
 %       G(s) = (K * (T_3*s + 1) / ((T_1*s + 1) * (T_2*s + 1))
 %
+
+%   Defino el tiempo t1
+t1 = 0.0101;    %se tomara un intervalo de t=10[ms] entre los puntos
+
+%   obtengo los 3 puntos de la salida
+t_t1 = Data(102,1); %la muestra 102 de la columna 1 (Tiempo [s])
+y_t1 = Data(102,3); %la muestra 102 de la columna 3 (V_cap [V])
+
+t_2t1 = Data(202,1);
+y_2t1 = Data(202,3);
+
+t_3t1 = Data(302,1);
+y_3t1 = Data(302,3);
+
+%   Viendo los valores de las graficas, puedo identificar que la ganancia
+%   estatica del sistema es unitaria
+K = 1;
+
+%   Puedo hallar asi los valores k1, k2 y k3
+k1 = (y_t1 / K) - 1;
+k2 = (y_2t1 / K) - 1;
+k3 = (y_3t1 / K) - 1;
+
+%   Con ello obtengo los valores b,alfa_1 y alfa_2
+b = 4*(k1^3)*k3 - 3*(k1^2)*(k2^2) - 4*(k2^3) + (k2^2) + 6*k1*k2*k3;
+alfa1 = ( k1*k2 + k3 - sqrt(b) ) / ( 2*((k1^2)+k2) );
+alfa2 = ( k1*k2 + k3 + sqrt(b) ) / ( 2*((k1^2)+k2) );
+beta = ( 2*(k1^3) + 3*k1*k2 + k3 - sqrt(b) ) / ( sqrt(b) );
+
+%   Puedo luego hallar los valores estimados de las constantes de tiempo
+%   T1, T2 y T3
+T1_est = -( t_t1 ) / ( log(alfa1) );
+T2_est = -( t_t1 ) / ( log(alfa2) );
+T3_est = beta*(T1_est-T2_est)+T1_est;
+
+%   Ya tendre entonces los valores necesarios para obtener la Transf de la
+%   funcion de transferencia como la propone Chen
+%   Ademas, desprecio el cero de la propuesta, puesto que la FT analizada
+%   no lo tiene
+s = tf('s');
+G = (K * (T3_est*s + 1) / ((T1_est*s + 1) * (T2_est*s + 1));
