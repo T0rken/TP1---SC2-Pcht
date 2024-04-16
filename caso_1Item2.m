@@ -87,4 +87,4 @@ T3_est = beta*(T1_est-T2_est)+T1_est;
 %   Ademas, desprecio el cero de la propuesta, puesto que la FT analizada
 %   no lo tiene
 s = tf('s');
-G = (K * (T3_est*s + 1) / ((T1_est*s + 1) * (T2_est*s + 1));
+G = ( K * (T3_est*s + 1) ) / ( (T1_est*s + 1) * (T2_est*s + 1) );
