@@ -27,3 +27,11 @@ plot(Data(:,1),Data(:,4)); %genero un grafico de la tension de entrada (col 4) e
 title('Tension Vin') %esta es una variable de entrada
 xlabel('Tiempo [s]');
 ylabel('Tension [V]');
+
+%   Observando las graficas, se puede apreciar:
+%       Condiciones iniciales nulas
+%       Retardo = 0.01 [s]
+%       Duracion de cada estado de la entrada = 0.04 [s]
+%       Amplitud de la tension de entrada = 12 [V] -> varia entre +12 y -12
+%       Amplitud de la tension de capacitor = 12 [V]
+%
