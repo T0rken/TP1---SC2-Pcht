@@ -1,12 +1,10 @@
-% Caso 1 - item 2
-
 clear all; clc; close all
 
-%genero una matriz con los datos proporcionados
+%   Genero una matriz con los datos proporcionados
 Data = readmatrix('G:\My Drive\a Ingenieria\2024 Primer Semestre\Sistemas de Control 2\Entregas\Pucheta\Act N1 - fecha max 23_04\Consignas\Curvas_Medidas_RLC_2024.xls');
 DataBis = readmatrix('Curvas_Medidas_RLC_2024.xls');
 
-%genero las graficas correspondientes a cada dato en funcion del tiempo 
+%   Genero las graficas correspondientes a cada dato en funcion del tiempo
 fig = figure(1);
 fig.Name = 'Corriente';
 plot(Data(:,1),Data(:,2)); %genero un grafico de la corriente (col 2) en funcion del tiempo (col 1)
@@ -49,17 +47,18 @@ ylabel('Tension [V]');
 %
 
 %   Defino el tiempo t1
-t1 = 0.0101;    %se tomara un intervalo de t=10[ms] entre los puntos
+t1 = 0.0131;   
+t = 0.003;  %se tomara un intervalo de t=3[ms] entre los puntos
 
 %   obtengo los 3 puntos de la salida
-t_t1 = Data(102,1); %la muestra 102 de la columna 1 (Tiempo [s])
-y_t1 = Data(102,3); %la muestra 102 de la columna 3 (V_cap [V])
+t_t1 = Data(131,1); %la muestra 102 de la columna 1 (Tiempo [s])
+y_t1 = Data(131,3); %la muestra 102 de la columna 3 (V_cap [V])
 
-t_2t1 = Data(202,1);
-y_2t1 = Data(202,3);
+t_2t1 = Data(161,1);
+y_2t1 = Data(161,3);
 
-t_3t1 = Data(302,1);
-y_3t1 = Data(302,3);
+t_3t1 = Data(191,1);
+y_3t1 = Data(191,3);
 
 %   Viendo los valores de las graficas, puedo identificar que la ganancia
 %   estatica del sistema es unitaria
@@ -84,7 +83,10 @@ T3_est = beta*(T1_est-T2_est)+T1_est;
 
 %   Ya tendre entonces los valores necesarios para obtener la Transf de la
 %   funcion de transferencia como la propone Chen
-%   Ademas, desprecio el cero de la propuesta, puesto que la FT analizada
-%   no lo tiene
 s = tf('s');
 G = ( K * (T3_est*s + 1) ) / ( (T1_est*s + 1) * (T2_est*s + 1) );
+%   Ademas, desprecio el cero de la propuesta, puesto que la FT analizada
+%   no lo tiene
+G = ( K * 1 ) / ( (T1_est*s + 1) * (T2_est*s + 1) );
+[numG,denG]=tfdata(G,'v');    %obtengo el numerador y el denominador de la FT en forma de vectores
+
