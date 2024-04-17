@@ -46,28 +46,28 @@ ylabel('Tension [V]');
 %       G(s) = (K * (T_3*s + 1) / ((T_1*s + 1) * (T_2*s + 1))
 %
 
-%   Defino el tiempo t1
-t1 = 0.0131;   
-t = 0.003;  %se tomara un intervalo de t=3[ms] entre los puntos
-
+n1 = 124;
+sep = 37;
+n2 = n1+sep;
+n3 = n1+2*sep;
 %   obtengo los 3 puntos de la salida
-t_t1 = Data(131,1); %la muestra 102 de la columna 1 (Tiempo [s])
-y_t1 = Data(131,3); %la muestra 102 de la columna 3 (V_cap [V])
+t_t1 = Data(n1,1); %la muestra 124 de la columna 1 (Tiempo [s])
+y_t1 = Data(n1,3); %la muestra 124 de la columna 3 (V_cap [V])
 
-t_2t1 = Data(161,1);
-y_2t1 = Data(161,3);
+t_2t1 = Data(n2,1);
+y_2t1 = Data(n2,3);
 
-t_3t1 = Data(191,1);
-y_3t1 = Data(191,3);
+t_3t1 = Data(n3,1);
+y_3t1 = Data(n3,3);
 
 %   Viendo los valores de las graficas, puedo identificar que la ganancia
 %   estatica del sistema es unitaria
-K = 1;
+stepK = 1;
 
 %   Puedo hallar asi los valores k1, k2 y k3
-k1 = (y_t1 / K) - 1;
-k2 = (y_2t1 / K) - 1;
-k3 = (y_3t1 / K) - 1;
+k1 = (y_t1 / stepK) - 1;
+k2 = (y_2t1 / stepK) - 1;
+k3 = (y_3t1 / stepK) - 1;
 
 %   Con ello obtengo los valores b,alfa_1 y alfa_2
 b = 4*(k1^3)*k3 - 3*(k1^2)*(k2^2) - 4*(k2^3) + (k2^2) + 6*k1*k2*k3;
@@ -80,13 +80,30 @@ beta = ( 2*(k1^3) + 3*k1*k2 + k3 - sqrt(b) ) / ( sqrt(b) );
 T1_est = -( t_t1 ) / ( log(alfa1) );
 T2_est = -( t_t1 ) / ( log(alfa2) );
 T3_est = beta*(T1_est-T2_est)+T1_est;
+%	Interesa solo la parte real
+T1_est = real(T1_est);
+T2_est = real(T2_est);
+T3_est = real(T3_est);
 
 %   Ya tendre entonces los valores necesarios para obtener la Transf de la
 %   funcion de transferencia como la propone Chen
 s = tf('s');
+K = 12;
 G = ( K * (T3_est*s + 1) ) / ( (T1_est*s + 1) * (T2_est*s + 1) );
-%   Ademas, desprecio el cero de la propuesta, puesto que la FT analizada
-%   no lo tiene
+%   Ademas, puedoo despreciar el cero de la propuesta, puesto que la FT 
+%   analizada no lo tiene
 G = ( K * 1 ) / ( (T1_est*s + 1) * (T2_est*s + 1) );
 [numG,denG]=tfdata(G,'v');    %obtengo el numerador y el denominador de la FT en forma de vectores
 
+%   Grafico la respuesta al impulso de la FT obtenida junto con la Vc
+fig = figure(4);
+fig.Name = 'chen';
+hold on
+step(G*exp(-s*0.01),0.05,'-g')            % respuesta al impulso de G con retraso de 0.01 [s] en verde
+plot(Data(:,1),Data(:,3),'--r');    % Vc(t) en color rojo
+plot(t_t1,y_t1, 'o');
+plot(t_2t1,y_2t1, 'o');
+plot(t_3t1,y_3t1, 'o');
+xlim([0.005 0.030]);
+legend({'Chen (encontrada)','Observada'},'Location','southeast','Orientation','vertical')
+hold off
