@@ -1,3 +1,4 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Caso 1 - item 2
 clear all; clc; close all
 
@@ -48,7 +49,7 @@ ylabel('Tension [V]');
 %
 
 n1 = 124;
-sep = 37;
+sep = 38;
 n2 = n1+sep;
 n3 = n1+2*sep;
 %   obtengo los 3 puntos de la salida
@@ -127,7 +128,8 @@ hold off
 %   otros.
 
 %   Sea R = 1 [kOhm]
-R = 1000;
+%R = 1000;
+R = 245;
 %   Luego
 C = (T1_est+T2_est)/R;
 L = (T1_est*T2_est)/C;
@@ -156,3 +158,52 @@ plot(t_3t1,y_3t1, 'o');
 xlim([0.005 0.030]);
 legend({'Obtenido RLC','Obtenido Chen', 'Observado'},'Location','southeast','Orientation','vertical')
 hold off
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Caso 1 - Item 3
+
+%   Creo una señal de entrada alternada para este caso observando los datos
+%   aportados
+ts = 0.2;         %tiempo de simulacion
+p = 0.00001;      % paso entre muestras 0.01ms
+t = 0:p:(ts-p);   % vector tiempo
+u = zeros(1,ts/p);
+for i=round(0.01/p):1:round(ts/p)
+    
+    if i>(0.01/p+1) && i<=(0.05/p)
+        u(1,i)=12;
+    elseif i>(0.05/p) && i<=(0.1/p)
+        u(1,i)=-12;
+    elseif i>(0.1/p) && i<=(0.15/p)
+        u(1,i)=12;
+    elseif i>(0.15/p) && i<=(0.2/p)
+        u(1,i)=-12;
+    end
+    
+end
+
+%   A partir de las ecuaciones del sistema RLC, se puede hallar la funcion
+%   de transferencia correspondiente a la corriente como salida. Esta
+%   seria:
+%       H(s) = I(s)/Ve(s)
+%   Se utiliza el modelo de espacio de estados proporcionado en el
+%   ejercicio para ello
+%   Se tiene:
+matA = [(-R/L) (-1/L);(1/C) 0];
+matB = [(1/L); 0];
+matC = [1 0];
+matD = [];
+%   El sistema para la corriente sera:
+sis_i = ss(matA,matB,matC,matD);
+y_i = lsim(sis_i,u,t);
+%   Veridicamos graficamente
+fig = figure(6);
+fig.Name = 'Verificacion corriente';
+hold on
+plot(t,y_i,'b');
+plot(Data(:,1),Data(:,2),'--r');
+legend({'i usando ec de estado','i observada'},'Location','southeast','Orientation','vertical')
+hold off
+
+
+
