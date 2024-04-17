@@ -8,21 +8,21 @@ DataBis = readmatrix('Curvas_Medidas_RLC_2024.xls');
 %   Genero las graficas correspondientes a cada dato en funcion del tiempo
 fig = figure(1);
 fig.Name = 'Corriente';
-plot(Data(:,1),Data(:,2)); %genero un grafico de la corriente (col 2) en funcion del tiempo (col 1)
+plot(Data(:,1),Data(:,2),'r'); %genero un grafico de la corriente (col 2) en funcion del tiempo (col 1)
 title('Corriente i') %esta es una variable de estado
 xlabel('Tiempo [s]');
 ylabel('Corriente [A]');
 
 fig = figure(2);
 fig.Name = 'Tension del Capacitor';
-plot(Data(:,1),Data(:,3)); %genero un grafico de la tension del capacitor (col 3) en funcion del tiempo (col 1)
+plot(Data(:,1),Data(:,3),'g'); %genero un grafico de la tension del capacitor (col 3) en funcion del tiempo (col 1)
 title('Tension Vc') %esta es una variable de estado
 xlabel('Tiempo [s]');
 ylabel('Tension [V]');
 
 fig = figure(3);
 fig.Name = 'Tension de Entrada';
-plot(Data(:,1),Data(:,4)); %genero un grafico de la tension de entrada (col 4) en funcion del tiempo (col 1)
+plot(Data(:,1),Data(:,4),'y'); %genero un grafico de la tension de entrada (col 4) en funcion del tiempo (col 1)
 title('Tension Vin') %esta es una variable de entrada
 xlabel('Tiempo [s]');
 ylabel('Tension [V]');
@@ -107,4 +107,52 @@ plot(t_2t1,y_2t1, 'o');
 plot(t_3t1,y_3t1, 'o');
 xlim([0.005 0.030]);
 legend({'Chen (encontrada)','Observada'},'Location','southeast','Orientation','vertical')
+hold off
+
+%   Lo que sigue es deducir los valores de R, L y C
+%   A partir de comparar la funcion de transferencia obtenida con Chen con
+%   la funcion de transferencia obtenida del sistema, se puede encontrar
+%   relaciones entre los coeficientes encontrados por Chen y los valores de
+%   R, L y C
+%
+%   La funcion de transferencia resultante tomando las ecuaciones de las
+%   tensiones analizadas queda:
+%       Gobs(s) = 1 / ( (s^2)*L*C + s*R*C + 1 )
+%
+%   La funcion de transferencia por Chen nos quedaba:
+%       G(s) = K / ( (s^2)*T1*T2 + s*(T1+T2) + 1 )
+%
+%   de manera que tendre dos ecuaciones para 3 incognitas
+%   Para salvar esto, puedo suponer uno de los valores y obtener luego los
+%   otros.
+
+%   Sea R = 1 [kOhm]
+R = 1000;
+%   Luego
+C = (T1_est+T2_est)/R;
+L = (T1_est*T2_est)/C;
+
+%   Y podria verificar tomando alguno de los obtenidos 
+C_verif = C;
+L_verif = (T1_est*T2_est)/C;
+R_verif = (T1_est+T2_est)/C;
+ 
+%   De esta forma, se determina que:
+%       Para R = 1 [kOhm];  L = 0.754 [Hy]; C = 3.016 [uF]
+%
+
+%   Se puede luego verificar si los valores obtenidos generan la FT deseada
+Gobs = ( K * 1 ) / ( (s^2)*L*C + s*R*C + 1)
+
+fig = figure(5);
+fig.Name = 'RLC vs Chen';
+hold on
+step(Gobs*exp(-s*0.01),0.05,'-r');
+step(G*exp(-s*0.01),0.05,'--g');
+plot(Data(:,1),Data(:,3),'--b');
+plot(t_t1,y_t1, 'o');
+plot(t_2t1,y_2t1, 'o');
+plot(t_3t1,y_3t1, 'o');
+xlim([0.005 0.030]);
+legend({'Obtenido RLC','Obtenido Chen', 'Observado'},'Location','southeast','Orientation','vertical')
 hold off
