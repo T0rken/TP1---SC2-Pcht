@@ -125,9 +125,9 @@ for i=(round(1/delta_t)+1):1:(puntos_sim)
 end
 %   defino el vector de entrada (en realidad es una matriz)
 u = [u1;u2];
-%supongo condiciones iniciales de las variables de estado  nulas
+%supongo condiciones iniciales de las variables de estado nulas
 x(1,1) = 0;
-x(2,1) = 1800;
+x(2,1) = 0;
 x(3,1) = 0;
 
 for ii=1:1:(puntos_sim+1)
