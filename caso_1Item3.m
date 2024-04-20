@@ -120,7 +120,7 @@ TLmax = Ki*iAmax        % TLmax = 0.0021 [N.m]
 u2(1,1) = 0;
 q = 0;
 for i=(round(1/delta_t)+1):1:(puntos_sim)
-    u2(1,i) = u2(1,i-1)+0.000000006;
+    u2(1,i) = u2(1,i-1)+0.000000005;
     %u2(1,i) = 0.0010;
 end
 %   defino el vector de entrada (en realidad es una matriz)
